@@ -24,7 +24,9 @@
           countries (.append svg "g")        
           ]
     
-    
+    (.json js/d3 "eu.json" (fn [eu-data] 
+                             (println eu-data))
+    )
  
     )
 )
