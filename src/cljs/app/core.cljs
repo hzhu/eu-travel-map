@@ -27,6 +27,20 @@
                                   (let [data (@ratom :countries)
                                         country (aget d "properties" "name")]
                                       (data country))))))))))
+(defn create-flags [data svg]
+  (.log js/console svg)
+  (println data)
+  )
+
+
+(defn create-labels [svg]
+  (.. js/d3
+    (json "cities.json" 
+          (fn [err data]
+            (if (not (nil? err))
+              (.error js/console err))            
+            (create-flags data svg)
+          ))))
 
 
 (defn did-mount-fn [ratom]
@@ -41,7 +55,9 @@
               (append "svg")
               (attr "height" height)
               (attr "width" width))]
-    (create-eu-map ratom path svg)))
+    (create-eu-map ratom path svg)
+    (create-labels svg)
+    ))
 
 
 (defn eu-map [ratom]
