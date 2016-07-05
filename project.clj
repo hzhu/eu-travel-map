@@ -1,7 +1,8 @@
 (defproject europe-travel-map "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.8.51"]
-                 [reagent "0.5.1"]]
+                 [reagent "0.5.1"]
+                 [cljsjs/d3 "3.5.16-0"]]
 
   :min-lein-version "2.5.3"
 
@@ -16,7 +17,6 @@
   :profiles
   {:dev
    {:dependencies []
-
     :plugins      [[lein-figwheel "0.5.4-3"]]
     }}
 
