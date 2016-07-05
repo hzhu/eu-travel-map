@@ -6,32 +6,39 @@
    [data.core :as data]))
 (enable-console-print!)
 
-(defonce app-state
-  (reagent/atom
-   {:text "Hello, what is your name? "}))
-
 (defn did-mount-fn [ratom]
-  (let   [width 800
-          height 600
-          center (clj->js [15, 61])
-          scale 1200
-          projection (.center (.translate (.scale ((aget js/d3 "geo" "mercator")) scale) (clj->js [(quot width 2) 0])) center)
-          path (.projection ((aget js/d3 "geo" "path")) projection)
-          svg (.. js/d3
-                (select "#map")
-                (append "svg")
-                (attr "height" height)
-                (attr "width" width))
-          countries (.append svg "g")        
-          ]
-    
-    (.json js/d3 "eu.json" 
-      (fn [eu-data] 
-        (.selectAll countries "country")
-        (.log js/console countries)))
- 
-    )
-)
+  (let [width 800
+        height 600
+        center (clj->js [15, 61])
+        scale 1200
+        projection (.center (.translate (.scale ((aget js/d3 "geo" "mercator")) scale) (clj->js [(quot width 2) 0])) center)
+        path (.projection ((aget js/d3 "geo" "path")) projection)
+        svg (.. js/d3
+              (select "#map")
+              (append "svg")
+              (attr "height" height)
+              (attr "width" width))]
+  
+    (.. js/d3
+        (json "eu.json" (fn [eu-data] 
+                          (let [topjson-transform (.-features (.feature js/topojson eu-data (aget eu-data "objects" "europe")))]
+                            (.. svg                              
+                                (selectAll "country")
+                                (data topjson-transform)
+                                enter
+                                (append "path")
+                                (attr "d" path)
+                                (attr "class" "country")                           
+                                (attr "data-name" (fn [d]                                                  
+                                                    (aget d "properties" "name")
+                                                    ))
+                                (style "stroke" "black")
+                                (style "opacity" 0.5)
+                                (style "fill" "black")
+                                (style "fill" (fn [d]
+                                                (let [data (@ratom :countries)
+                                                      country (aget d "properties" "name")]
+                                                    (data country)))))))))))
 
 (defn eu-map [ratom]
   (reagent/create-class { 
