@@ -24,8 +24,8 @@
   {:builds
    [{:id           "dev"
      :source-paths ["src/cljs"]
-     :figwheel     {:on-jsload "europe-travel-map.core/reload"}
-     :compiler     {:main                 europe-travel-map.core
+     :figwheel     {:on-jsload "app.core/reload"}
+     :compiler     {:main                 app.core
                     :output-to            "resources/public/js/compiled/app.js"
                     :output-dir           "resources/public/js/compiled/out"
                     :asset-path           "js/compiled/out"
@@ -33,7 +33,7 @@
 
     {:id           "min"
      :source-paths ["src/cljs"]
-     :compiler     {:main          europe-travel-map.core
+     :compiler     {:main          app.core
                     :output-to     "resources/public/js/compiled/app.js"
                     :optimizations :advanced
                     :closure-defines {goog.DEBUG false}

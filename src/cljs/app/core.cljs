@@ -1,4 +1,4 @@
-(ns europe-travel-map.core
+(ns app.core
   (:require
    [reagent.core :as reagent]
    ))
