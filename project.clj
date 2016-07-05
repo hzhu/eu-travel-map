@@ -2,7 +2,8 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.8.51"]
                  [reagent "0.5.1"]
-                 [cljsjs/d3 "3.5.16-0"]]
+                 [cljsjs/d3 "3.5.16-0"]
+                 [cljsjs/topojson "1.6.18-0"]]
 
   :min-lein-version "2.5.3"
 

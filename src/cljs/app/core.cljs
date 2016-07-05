@@ -2,6 +2,7 @@
   (:require
    [reagent.core :as reagent]
    [cljsjs.d3 :as d3]
+   [cljsjs.topojson :as topojson]
    [data.core :as data]))
 (enable-console-print!)
 
@@ -24,9 +25,10 @@
           countries (.append svg "g")        
           ]
     
-    (.json js/d3 "eu.json" (fn [eu-data] 
-                             (println eu-data))
-    )
+    (.json js/d3 "eu.json" 
+      (fn [eu-data] 
+        (.selectAll countries "country")
+        (.log js/console countries)))
  
     )
 )
