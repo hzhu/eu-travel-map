@@ -11,10 +11,10 @@
   (.. js/d3
     (json "eu.json"
           (fn [eu-data]
-            (let [topjson-transform (.. js/topojson (feature eu-data (aget eu-data "objects" "europe")) -features)]
+            (let [topojson-transform (.. js/topojson (feature eu-data (aget eu-data "objects" "europe")) -features)]
               (.. svg
                   (selectAll "country")
-                  (data topjson-transform)
+                  (data topojson-transform)
                   enter
                   (append "path")
                   (attr "d" path)
@@ -27,10 +27,10 @@
                   (style "fill" (fn [d]
                                   (let [data (@ratom :countries)
                                         country (aget d "properties" "name")]
-                                      (data country))))))))))
+                                        (data country))))))))))
 
 
-(defn create-flags [data svg projection]
+(defn create-flags [data projection]
    (let [topojson-transform ( .. js/topojson (feature data (aget data "objects" "places")) -features)]
      (.. js/d3
          (select "svg")
@@ -43,14 +43,36 @@
          (attr "transform" (fn [d]
                                (let [coordinates (aget d "geometry" "coordinates")
                                      pos (projection coordinates)]
-                                 (aset pos 0 (- (aget pos 0) 15))
-                                 (aset pos 1 (- (aget pos 1)  5))
-                                 (str "translate(" pos ")"))))
+                                     (aset pos 0 (- (aget pos 0) 15))
+                                     (aset pos 1 (- (aget pos 1)  5))
+                                     (str "translate(" pos ")"))))
          (attr "xlink:href" (fn [d]
                              (let [value (aget d "properties" "country")
                                    country-lower (s/lower-case value)
                                    country (s/replace country-lower #" " "_")]
-                                 (str "/flags/" country ".svg")))))))
+                                   (str "/flags/" country ".svg")))))))
+
+
+(defn create-city [data projection]
+  (let [topojson-transform ( .. js/topojson (feature data (aget data "objects" "places")) -features)]
+    (.. js/d3
+        (select "svg")
+        (selectAll ".place-label")
+        (data topojson-transform)
+        enter
+        (append "text")
+        (style "font-family" "Verdana")
+        (style "font-size" "12px")
+        (style "font-weight" "bold")
+        (style "class" "place-label")
+        (attr "transform" (fn [d]
+                            (let [coordinates (aget d "geometry" "coordinates")
+                                  pos (projection coordinates)]
+                                  (str "translate(" pos ")"))))
+        (text (fn [d] (aget d "properties" "name")))
+        (attr "dy" ".35em")
+        (attr "x" 5)
+        (style "fill" "black"))))
 
 
 (defn create-labels [svg projection]
@@ -59,7 +81,8 @@
           (fn [err data]
             (if (not (nil? err))
               (.error js/console err))
-            (create-flags data svg projection)))))
+            (create-flags data projection)
+            (create-city data projection)))))
 
 
 (defn did-mount-fn [ratom]
