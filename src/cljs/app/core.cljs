@@ -2,6 +2,7 @@
   (:require
    [reagent.core :as reagent]
    [data.core :as data]
+   [clojure.string :as s]
    [cljsjs.d3 :as d3]
    [cljsjs.topojson :as topojson]))
 (enable-console-print!)
@@ -27,20 +28,38 @@
                                   (let [data (@ratom :countries)
                                         country (aget d "properties" "name")]
                                       (data country))))))))))
-(defn create-flags [data svg]
-  (.log js/console svg)
-  (println data)
-  )
 
 
-(defn create-labels [svg]
+(defn create-flags [data svg projection]
+   (let [topojson-transform ( .. js/topojson (feature data (aget data "objects" "places")) -features)]
+     (.. js/d3
+         (select "svg")
+         (selectAll ".flags")
+         (data topojson-transform)
+         enter
+         (append "image")
+         (attr "width" 18)
+         (attr "height" 11)
+         (attr "transform" (fn [d]
+                               (let [coordinates (aget d "geometry" "coordinates")
+                                     pos (projection coordinates)]
+                                 (aset pos 0 (- (aget pos 0) 15))
+                                 (aset pos 1 (- (aget pos 1)  5))
+                                 (str "translate(" pos ")"))))
+         (attr "xlink:href" (fn [d]
+                             (let [value (aget d "properties" "country")
+                                   country-lower (s/lower-case value)
+                                   country (s/replace country-lower #" " "_")]
+                                 (str "/flags/" country ".svg")))))))
+
+
+(defn create-labels [svg projection]
   (.. js/d3
-    (json "cities.json" 
+    (json "cities.json"
           (fn [err data]
             (if (not (nil? err))
-              (.error js/console err))            
-            (create-flags data svg)
-          ))))
+              (.error js/console err))
+            (create-flags data svg projection)))))
 
 
 (defn did-mount-fn [ratom]
@@ -54,10 +73,10 @@
               (select "#map")
               (append "svg")
               (attr "height" height)
-              (attr "width" width))]
+              (attr "width" width)
+              (append "g"))]
     (create-eu-map ratom path svg)
-    (create-labels svg)
-    ))
+    (create-labels svg projection)))
 
 
 (defn eu-map [ratom]
