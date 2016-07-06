@@ -1,4 +1,4 @@
-(ns data.core
+(ns app.data
   (:require
        [reagent.core :as reagent]))
 

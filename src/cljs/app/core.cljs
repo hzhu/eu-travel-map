@@ -1,7 +1,7 @@
 (ns app.core
   (:require
    [reagent.core :as reagent]
-   [data.core :as data]
+   [app.data :as data]
    [clojure.string :as s]
    [cljsjs.d3 :as d3]
    [cljsjs.topojson :as topojson]))
