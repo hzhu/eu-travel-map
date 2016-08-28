@@ -2,6 +2,8 @@
 
 A visualization showing the EU countries and cities I've been to with d3.js and Reagent.
 
+See: [http://henryzhu.me/map](http://henryzhu.me/map)
+
 ## Development Mode
 
 ### Run application:
